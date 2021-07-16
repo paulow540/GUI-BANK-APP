@@ -56,6 +56,75 @@ class Atm():
 		self.pinScreen.insert(0, self.onScreen[:-1])
 
 
-	
+	def pin(self, var):
+			self.onScreen = self.pinScreen.get()
+			if self.onScreen != '':
+				self.pinScreen.delete(0, len(self.onScreen))
+				self.pinScreen.insert(0, self.onScreen + var)
+			else:
+				self.pinScreen.insert(0, var)
+
+	def enter(self):
+		# showinfo('pin', self.pinScreen.get())
+		query = 'SELECT * FROM customers WHERE Account_Pin=%s'
+		val = (int(self.pinScreen.get()),)
+		self.mycursor.execute(query, val)
+		myreg = self.mycursor.fetchall()
+		if myreg:
+			showinfo('Successful', 'Login successful')
+			self.changeAll()
+		else:
+			showinfo('Error', 'Incorrect pin')
+
+
+	def changeAll(self):
+		return
+
+	def register(self):
+		self.reg = Toplevel()
+		self.reg.title('Register')
+		self.reg.geometry('300x300')
+		self.newMainFrame = Frame(self.reg)
+		self.newMainFrame.pack()
+		# self.reg.iconbitmap('icons8_Add_User_Male.ico')
+		Label(self.newMainFrame, text='First Name').grid(row=0, column=0)
+		self.fName = Entry(self.newMainFrame, width=30)
+		self.fName.grid(row=0, column=1)
+		Label(self.newMainFrame, text='Last Name').grid(row=1, column=0)
+		self.lName = Entry(self.newMainFrame, width=30)
+		self.lName.grid(row=1, column=1)
+		Label(self.newMainFrame, text='Sex').grid(row=2, column=0)
+		self.sex = Entry(self.newMainFrame, width=30)
+		self.sex.grid(row=2, column=1)
+		Label(self.newMainFrame, text='Phone Number').grid(row=3, column=0)
+		self.phone = Entry(self.newMainFrame, width=30)
+		self.phone.grid(row=3, column=1)
+		Label(self.newMainFrame, text='Address').grid(row=4, column=0)
+		self.address = Entry(self.newMainFrame, width=30)
+		self.address.grid(row=4, column=1)
+		Label(self.newMainFrame, text='pin').grid(row=5, column=0)
+		self.pin = Entry(self.newMainFrame, width=30)
+		self.pin.grid(row=5, column=1)
+		Button(self.newMainFrame, text='Register', command=self.newUser).grid(row=6, column=1)
+
+	def acctNo(self):
+		return random.randint(1000000,9999999)
+
+	def newUser(self):
+		self.no = '101' + str(self.acctNo())
+		self.uPin = self.pin.get()
+		self.first_name = self.fName.get()
+		self.last_name = self.lName.get()
+		self.gender = self.sex.get()
+		self.phone_number = self.phone.get()
+		self.adres = self.address.get()
+		amount = 0
+		query = 'INSERT INTO customers(Account_Number, First_Name, Last_Name, Sex, Phone_Number, Address, Account_Pin, Amount) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)'
+		val = (self.no, self.first_name, self.last_name, self.gender, self.phone_number, self.adres, self.uPin, amount)
+		self.mycursor.execute(query, val)
+		self.mycon.commit()
+		showinfo('Registration successful', 'Registration successful, Your account number is ' + str(self.no))
+		time.sleep(5)
+		self.reg.destroy()
 
 me = Atm()
